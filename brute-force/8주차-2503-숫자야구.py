@@ -1,29 +1,26 @@
-import sys
 from itertools import permutations
 
-N = int(sys.stdin.readline().rstrip())
+def match(target, comp):
+    s, b = 0, 0
+    for i in range(3):
+        if target[i] == comp[i]:
+            s += 1
+        elif target[i] in comp:
+            b += 1
+    return s, b
 
+n = int(input())
+arr = [list(map(int, input().split())) for _ in range(n)]
 numbers = list(permutations(["1", "2", "3", "4", "5", "6", "7", "8", "9"], 3))
 
-for _ in range(N):
-    question_number, strike, ball = map(int, sys.stdin.readline().split())
-    question_number = list(str(question_number))
-    removed = 0
-	
-    for i in range(len(numbers)):
-        strike_cnt = 0
-        ball_cnt = 0
+ans = 0
+for num in numbers:
+    cnt = 0
+    for a in arr:
+        s, b = match(num, str(a[0]))
+        if (s, b) == (a[1], a[2]):
+            cnt += 1
+    if cnt == len(arr):
+        ans += 1
         
-        i -= removed
-        
-        for j in range(3):
-            if question_number[j] == numbers[i][j]:
-                strike_cnt += 1
-            elif question_number[j] in numbers[i]:
-                ball_cnt += 1
-        
-        if strike_cnt != strike or ball_cnt != ball:
-            numbers.remove(numbers[i])
-            removed += 1
-
-print(len(numbers))
+print(ans)
