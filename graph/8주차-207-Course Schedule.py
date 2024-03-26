@@ -1,28 +1,28 @@
-class Node:
-    def __init__(self):
-        self.connected = []
-        self.inbound = 0
-
 class Solution:
     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-        graph = [Node() for _ in range(numCourses)]
-        left = numCourses
-        for i in prerequisites:
-            graph[i[1]].connected.append(i[0])
-            graph[i[0]].inbound += 1
+        
+        # 위상정렬 문제
+        ingoing = [0 for _ in range(numCourses)]
+        outgoing = [[] for _ in range(numCourses)]
+        for prereq in prerequisites:
+            f = prereq[0]
+            t = prereq[1]
+            ingoing[t] += 1
+            outgoing[f].append(t)
 
-        q = deque()
+        queue = deque()
+        for i, x in enumerate(ingoing):
+            if x == 0:
+                queue.append(i)
+        order = []
+        while queue:
+            x = queue.popleft()
+            order.append(x)
+            for y in outgoing[x]:
+                ingoing[y] -= 1
+                if ingoing[y] == 0:
+                    queue.append(y)
 
-        for node in graph:
-            if node.inbound == 0: q.append(node)
-
-        while len(q) != 0:
-            node: Node = q.popleft()
-            left -= 1
-            for c in node.connected:
-                graph[c].inbound -= 1
-                if graph[c].inbound == 0:
-                    q.append(graph[c])
-
-        if left == 0: return True
-        else: return False
+        return len(order) == numCourses
+        
+        
